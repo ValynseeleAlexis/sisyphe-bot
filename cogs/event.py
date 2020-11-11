@@ -23,8 +23,6 @@ class Event(commands.Cog):
         self.channel = None
         #id of the default channel
         self.channelid = 775826986886627348
-        # Taks list
-        self.tasks = None
         print("event is loaded")
 
      
@@ -36,7 +34,7 @@ class Event(commands.Cog):
         await self.client.change_presence(status=discord.Status.idle,activity=discord.Game('Must push rocks !'))
         self.channel = self.client.get_channel(self.channelid)
         #   Starting loop
-        #   self.task = self.test.start()
+        # test = self.dying.start()
         print('###READY###\n'
         f'{self.client.user} is connected to the following guild:\n'
         f'{self.guild.name}(id: {self.guild.id})'
@@ -61,9 +59,9 @@ class Event(commands.Cog):
             await self.channel.send(message)
 
     # example of loop, the client must be ready
-  #  @tasks.loop(seconds=2)
-  #  async def test(self):
-   #     await self.channel.send("UwU")
+    @tasks.loop(seconds=0.5)
+    async def dying(self):
+        await self.channel.send("Je veux mourir")
 
 
 def setup(client):
