@@ -6,13 +6,14 @@ import discord
 from discord.channel import VoiceChannel
 from discord.ext.commands.errors import MissingRequiredArgument, UserInputError
 from dotenv import load_dotenv
-from discord.ext import commands
+from discord.ext import commands, tasks
 import pyfiglet
 
 class Fun(commands.Cog):
 
     def __init__(self,client):
         self.client = client
+        print("fun is loaded")
 
     @commands.command(name="tg")
     async def tg(self,ctx):
@@ -33,8 +34,8 @@ class Fun(commands.Cog):
         response = 'Je peux presque sentir les zamblas !\n'+'https://www.youtube.com/playlist?list=PLRzJXByzOxVuF2aC_B81ydX9zoQ1v6PGU'
         await ctx.send(response)
 
-    @commands.command(name='all')
-    async def mention(self,ctx):
+    @commands.command(name='xd')
+    async def xd(self,ctx):
         await ctx.send(f"@everyone , xD")
 
 
@@ -91,6 +92,7 @@ class Fun(commands.Cog):
                 ```
             """
         await ctx.send(hello)
+        await ctx.send("https://www.youtube.com/watch?v=AMShoQ_qdc0&ab_channel=%EC%BF%A0%EC%82%BCkusam")
         
     @commands.command(name="ascii")
     async def ascii(self,ctx, *,msg):
@@ -103,6 +105,12 @@ class Fun(commands.Cog):
             await ctx.send("Ta place est a la cuisine pd",tts=True)
         else:
             await ctx.send("chachawx only grrrrrr !")
-            
+    @commands.command(name="louix",hidden=True)
+    async def louix(self,ctx):
+        if(ctx.author.id == 221341133719076865):
+            await ctx.send("Louix grosse merde",tts=True)
+        else:
+            await ctx.send("chachawx only grrrrrr !")
+
 def setup(client):
     client.add_cog(Fun(client))
