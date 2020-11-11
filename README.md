@@ -1,2 +1,2 @@
 # sisyphe-bot
-A simple bot in python for discord
+A simple python bot for discord
