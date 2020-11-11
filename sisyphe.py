@@ -15,7 +15,11 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 
-client = commands.Bot(command_prefix='!', intents=intents) 
+client = commands.Bot(command_prefix='.', intents=intents) 
+
+@client.command(name='dev')
+async def dev(ctx):
+	await ctx.send("Je suis la version en développement de Sisyphe")
 
 @client.command(hidden=True)
 async def load(ctx, extension):
