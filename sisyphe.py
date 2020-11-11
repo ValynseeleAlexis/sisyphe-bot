@@ -15,9 +15,14 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 
-client = commands.Bot(command_prefix='.', intents=intents) 
+client = commands.Bot(command_prefix='.', intents=intents)
 
-@client.command(name='dev')
+# Uncomment when pushing to Heroku
+#@client.command(hidden=True)
+#async def host(ctx):
+#	await ctx.send("Je suis host sur Heroku !")
+
+@client.command(name='dev',hidden=True)
 async def dev(ctx):
 	await ctx.send("Je suis la version en développement de Sisyphe")
 
