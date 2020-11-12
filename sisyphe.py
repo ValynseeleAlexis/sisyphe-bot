@@ -13,7 +13,6 @@ intents = discord.Intents().all()
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
 
 client = commands.Bot(command_prefix='.', intents=intents)
 
@@ -27,17 +26,17 @@ async def host(ctx):
 async def dev(ctx):
 	await ctx.send("Je suis la version en développement de Sisyphe")
 
-@client.command(hidden=True)
+@client.command(name="load",hidden=True)
 async def load(ctx, extension):
 	client.load_extension(f'cogs.{extension}')
 	await ctx.send("extension loaded succesfuly !")
 
-@client.command(hidden=True)
+@client.command(name="unload",hidden=True)
 async def unload(ctx, extension):
 	client.unload_extension(f'cogs.{extension}')
 	await ctx.send("extension unloaded succesfuly !")
 
-@client.command(hidden=True)
+@client.command(name="reload",hidden=True)
 async def reload(ctx, extension):
 	client.unload_extension(f'cogs.{extension}')
 	client.load_extension(f'cogs.{extension}')

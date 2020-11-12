@@ -9,9 +9,11 @@ from discord.ext import tasks
 from discord.ext.commands.errors import CommandError, CommandNotFound, MissingRequiredArgument, UserInputError
 from dotenv import load_dotenv
 from discord.ext import commands
+from itertools import cycle
 
 load_dotenv('dotenv_path=../.env')
 GUILD = os.getenv('DISCORD_GUILD')
+DEFAULT_CHANNEL = os.getenv('DEFAULT_CHANNEL')
 
 class Event(commands.Cog):
 
@@ -21,20 +23,24 @@ class Event(commands.Cog):
         self.guild = None
         # default channel
         self.channel = None
-        #id of the default channel
-        self.channelid = 775826986886627348
         print("event is loaded")
+
 
      
 
     # Connexion
     @commands.Cog.listener()
     async def on_ready(self):
+        #Initializing attributs
         self.guild = discord.utils.get(self.client.guilds, name=GUILD)
-        await self.client.change_presence(status=discord.Status.idle,activity=discord.Game('Must push rocks !'))
-        self.channel = self.client.get_channel(self.channelid)
-        #   Starting loop
-        # test = self.dying.start()
+        self.channel = self.client.get_channel(int(DEFAULT_CHANNEL))
+
+        #Setting status
+        await self.client.change_presence(status=discord.Status.online,activity=discord.Game('Must push rocks !'))
+
+        #   Starting loops
+        # MoodHandler = self.mood.start()
+
         print('###READY###\n'
         f'{self.client.user} is connected to the following guild:\n'
         f'{self.guild.name}(id: {self.guild.id})'
@@ -44,7 +50,7 @@ class Event(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self,ctx, error):
         if isinstance(error, MissingRequiredArgument):
-            await ctx.send("Il me manque un paramètre OwO !") 
+            await ctx.send("Il me manque des paramètres OwO !") 
         if isinstance(error, CommandNotFound):
             await ctx.send("Commande inconnue ! Owo")
 
@@ -58,11 +64,7 @@ class Event(commands.Cog):
                 message = f"{before.mention} n'as plus de pseudonyme"
             await self.channel.send(message)
 
-    # example of loop, the client must be ready
-    @tasks.loop(seconds=0.5)
-    async def dying(self):
-        await self.channel.send("Je veux mourir")
-
-
+    # LOOPS
+  
 def setup(client):
     client.add_cog(Event(client))

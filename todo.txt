@@ -1,0 +1,11 @@
+@all
+channel sisyphe via token dans .env [DONE]
+
+@wisdom.py
+plus de patterns pour wisdom    [DONE]
+shuffle le cycle a sa génération [DONE]
+gestions d'arguments pour horoscope [X]
+
+@medias
+apprendre a gérer des medias
+

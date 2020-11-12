@@ -27,7 +27,7 @@ class Utilitaire(commands.Cog):
     async def ping(self,ctx):
         await ctx.send(f'Pong! ({round(self.client.latency * 1000)} ms)')
 
-    @commands.command(hidden=True)
+    @commands.command(name="mdr")
     async def mdr(self,ctx):
         # Handling chachawx
         if(ctx.author.id == 221341133719076865):
