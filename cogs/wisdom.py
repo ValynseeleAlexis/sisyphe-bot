@@ -12,6 +12,7 @@ from itertools import cycle
 
 load_dotenv()
 DEFAULT_CHANNEL = os.getenv('DEFAULT_CHANNEL')
+GUILD = os.getenv('DISCORD_GUILD')
 
 class Wisdom(commands.Cog):
     def __init__(self,client):
@@ -21,7 +22,8 @@ class Wisdom(commands.Cog):
         print("wisdom is loaded")
     
     @commands.Cog.listener()
-    async def on_ready(self): 
+    async def on_ready(self):
+        self.guild = discord.utils.get(self.client.guilds, name=GUILD)
         self.channel = self.client.get_channel(int(DEFAULT_CHANNEL))
         filename = './assets/mots.txt'
         with open(filename) as file_object:
@@ -40,6 +42,7 @@ class Wisdom(commands.Cog):
     
     def patternGenerator(self):
         pattern = []
+        # Number of patterns = 30
         pattern.append(f"J'ai fais un {self.randomChoice()}, c'etait {self.randomChoice()}...")
         pattern.append(f"@everyone Vous êtes tellement {self.randomChoice()} !")
         pattern.append(f"J'adore {self.randomChoice()}")
@@ -76,22 +79,58 @@ class Wisdom(commands.Cog):
     @commands.command(name="wisdom")
     async def wisdom(self,ctx):
         pattern = self.patternGenerator()
+        await ctx.message.delete()
+        await ctx.send(f"{random.choice(pattern)}\n")
+       
+
+    @commands.command(name="h")
+    async def horoscope(self,ctx,*target):
+        localTarget = ''
+        pattern = []
+        await ctx.message.delete()
+        if(target):
+            for ar in target:
+                localTarget += ar+' '
+        else:
+            localTarget = ctx.author.mention
+        pattern.append(f"Aujourd'hui {localTarget} va {self.randomChoice()}")
+        pattern.append(f"{localTarget} est très {self.randomChoice()} en ce moment")
+        pattern.append(f"{localTarget} va mourir de {self.randomChoice()}")
+        pattern.append(f"Aujourd'hui {localTarget} est {self.randomChoice()} et ses actions sont {self.randomChoice()}")
+        pattern.append(f"{localTarget} un mot pour décrire votre situation amoureuse : {self.randomChoice()}")
+        pattern.append(f"{localTarget} va rencontrer Yveline Bertaux ! :two_hearts:")
+     
         await ctx.send(f"{random.choice(pattern)}\n")
 
-    @commands.command(name="horoscope")
-    async def horoscope(self,ctx):
-          pattern = []
-          pattern.append(f"Aujourd'hui {ctx.author.mention} va {self.randomChoice()}")
-          pattern.append(f"{ctx.author.mention} est très {self.randomChoice()} en ce moment")
-          await ctx.send(f"{random.choice(pattern)}\n")
+    @commands.command(name="h2")
+    async def horoscopeEnsemble(self,ctx,*target):
+        await ctx.message.delete()
+        members = []
+        pattern = []
+        localTarget = None
+        guild = ctx.author.guild
 
-    # LOOPS
+        for member in guild.members:
+            members.append(member)
+        localTarget = (random.choice(members)).mention
+        
+        if(target):
+            localTarget = ''
+            for ar in target:
+                localTarget += ar+' '
+                
+        pattern.append(f"La relation entre {ctx.author.mention} et {localTarget} est {self.randomChoice()}")
+        pattern.append(f"{ctx.author.mention} va {self.randomChoice()} {localTarget}")
+        pattern.append(f"{ctx.author.mention} est mieux que {localTarget}")
+        pattern.append(f"{ctx.author.mention} et {localTarget} tombent soudainement fan de {self.randomChoice()} {self.randomChoice()}")
 
-    @tasks.loop(minutes=15)
+        await ctx.send(f"{random.choice(pattern)}\n")
+    # LOOP
+    @tasks.loop(seconds=15)
     async def autoWisdom(self):
         await self.channel.send(next(self.cycle))
         
-    @tasks.loop(seconds=27000)
+    @tasks.loop(seconds=450)
     async def regenerateCycle(self):
         self.cycle = self.patternGenerator()
         self.cycle = random.sample(self.cycle,len(self.cycle))

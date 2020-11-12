@@ -41,6 +41,7 @@ class Utilitaire(commands.Cog):
 
     @commands.command(name="repete")
     async def repete(self,ctx, *,msg):
+        await ctx.message.delete()
         await ctx.channel.send(f'{msg}',tts=True)
 
     @commands.command(name="clear")
