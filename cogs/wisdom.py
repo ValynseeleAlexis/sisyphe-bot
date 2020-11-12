@@ -30,8 +30,8 @@ class Wisdom(commands.Cog):
 	        self.dictionnary = file_object.readlines()
 
         #Loops handling
-        self.regenerateCycle.start()
-        self.autoWisdom.start()
+        #self.regenerateCycle.start()
+        #self.autoWisdom.start()
     
     def randomChoice(self):
             return random.choice(self.dictionnary).rstrip()
