@@ -23,10 +23,7 @@ class Event(commands.Cog):
         self.guild = None
         # default channel
         self.channel = None
-        print("event is loaded")
-
-
-     
+        print("Event is loaded")
 
     # Connexion
     @commands.Cog.listener()
@@ -37,9 +34,6 @@ class Event(commands.Cog):
 
         #Setting status
         await self.client.change_presence(status=discord.Status.online,activity=discord.Game('Must push rocks !'))
-
-        #   Starting loops
-        # MoodHandler = self.mood.start()
 
         print('###READY###\n'
         f'{self.client.user} is connected to the following guild:\n'

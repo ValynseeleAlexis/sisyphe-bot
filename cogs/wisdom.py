@@ -19,7 +19,7 @@ class Wisdom(commands.Cog):
         self.client = client   
         self.dictionnary = None
         self.cycle = None
-        print("wisdom is loaded")
+        print("Wisdom is loaded")
     
     @commands.Cog.listener()
     async def on_ready(self):
@@ -30,15 +30,11 @@ class Wisdom(commands.Cog):
 	        self.dictionnary = file_object.readlines()
 
         #Loops handling
-        #self.regenerateCycle.start()
+        self.regenerateCycle.start()
         #self.autoWisdom.start()
     
     def randomChoice(self):
             return random.choice(self.dictionnary).rstrip()
-    
-    @commands.command(name="random")
-    async def random(self,ctx):
-        await ctx.send(self.randomChoice())
     
     def patternGenerator(self):
         pattern = []
@@ -76,14 +72,18 @@ class Wisdom(commands.Cog):
        
         return pattern
 
-    @commands.command(name="wisdom")
+    @commands.command(name="random",brief="Genère un mot aléatoirement",description="Renvoie un mot aléatoirement en se servant du dicitonnaire interne de sisyphe")
+    async def random(self,ctx):
+        await ctx.send(self.randomChoice())
+
+    @commands.command(name="wisdom",aliases=['w'],brief="Genère un message d'une grande sagesse (alias:w)",description="Genère un message à l'aide de modèles et du dictionnaire de sisyphe",help="Utilisez wisdom ou w pour demander à sisyphe de générer un message aléatoirement")
     async def wisdom(self,ctx):
         pattern = self.patternGenerator()
         await ctx.message.delete()
         await ctx.send(f"{random.choice(pattern)}\n")
        
 
-    @commands.command(name="h")
+    @commands.command(name="horoscope",aliases=['h'],brief="Prédit votre avenir ou celui de la personne mentionné (alias:h)",description="Genère un message aléatoire à l'aide de modèles et du dictionnaire de sisyphe",help="Utilisez horoscope ou h suivi de votre cible,sans cible vous serez choisi par défaut")
     async def horoscope(self,ctx,*target):
         localTarget = ''
         pattern = []
@@ -102,7 +102,7 @@ class Wisdom(commands.Cog):
      
         await ctx.send(f"{random.choice(pattern)}\n")
 
-    @commands.command(name="h2")
+    @commands.command(name="horoscope2",aliases=['h2'],brief="Prédit votre avenir en commun avec la personne mentionné (alias:h2)",description="Genère un message aléatoire à l'aide de modèles et du dictionnaire de sisyphe",help="Utilisez horoscope2 ou h2 suivi de votre cible,sans cible la seconde cible sera aléatoire")
     async def horoscopeEnsemble(self,ctx,*target):
         await ctx.message.delete()
         members = []
@@ -126,11 +126,11 @@ class Wisdom(commands.Cog):
 
         await ctx.send(f"{random.choice(pattern)}\n")
     # LOOP
-    @tasks.loop(seconds=15)
+    @tasks.loop(minutes=15)
     async def autoWisdom(self):
         await self.channel.send(next(self.cycle))
         
-    @tasks.loop(seconds=450)
+    @tasks.loop(minutes=450)
     async def regenerateCycle(self):
         self.cycle = self.patternGenerator()
         self.cycle = random.sample(self.cycle,len(self.cycle))

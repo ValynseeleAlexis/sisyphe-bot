@@ -13,9 +13,9 @@ class Utilitaire(commands.Cog):
 
     def __init__(self,client):
         self.client = client
-        print("utilitaire is loaded")
+        print("Utilitaire is loaded")
     
-    @commands.command(name='membres')
+    @commands.command(name='membres',brief="Renvoie la liste des membres du serveur courant",description="Renvoie la liste des membres du serveur courant",help="")
     async def membres(self,ctx):
         guild = ctx.author.guild
         await ctx.send(f"{ctx.author.mention} , voici la liste des membres de {guild.name}")
@@ -23,11 +23,11 @@ class Utilitaire(commands.Cog):
             response = '-{}\n'.format(member.name)
             await ctx.send(response)
 
-    @commands.command(name='ping')
+    @commands.command(name='ping',brief="Renvoie le ping de Sisyphe",description="Renvoie le ping de Sisyphe",help="")
     async def ping(self,ctx):
         await ctx.send(f'Pong! ({round(self.client.latency * 1000)} ms)')
 
-    @commands.command(name="mdr")
+    @commands.command(name="mdr",brief="xD",description="xD",help="xD")
     async def mdr(self,ctx):
         await ctx.message.delete()
         # Handling chachawx
@@ -38,12 +38,12 @@ class Utilitaire(commands.Cog):
             for member in guild.members:
                 await member.move_to(None)
 
-    @commands.command(name="repete")
+    @commands.command(name="repete",aliases=["r"],brief="Demande a Sisyphe de lire votre message (alias:r)",description="Demande a Sisyphe de lire votre message en tts",help="repete ou r + votre message")
     async def repete(self,ctx, *,msg):
         await ctx.message.delete()
         await ctx.channel.send(f'{msg}',tts=True)
 
-    @commands.command(name="clear")
+    @commands.command(name="clear",aliases=['c'],brief="Purge le channel courant du nombre messages précisés (alias:c)",description="Purge le channel courant du nombre messages précisés",help="clear ou c + nombre de messages")
     async def clear(self,ctx,amount: int):
         deleted = await ctx.channel.purge(limit=amount)
         await ctx.send(f"Deleted {len(deleted)} messages")

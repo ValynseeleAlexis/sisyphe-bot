@@ -1,6 +1,6 @@
 # sisyphe.py
 import os
-from os import sendfile
+from os import name, sendfile
 import random
 from random import choice
 import discord
@@ -14,17 +14,14 @@ intents = discord.Intents().all()
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-client = commands.Bot(command_prefix='.', intents=intents)
+client = commands.Bot(command_prefix='.', intents=intents,
+description="Bienvenue sur l'aide de Sisyphe\n")
 
 # Uncomment when pushing to Heroku
 @client.command(hidden=True)
 async def host(ctx):
 	#await ctx.send("Je suis host sur Heroku !")
 	await ctx.send("Je suis host localement !")
-
-@client.command(name='dev',hidden=True)
-async def dev(ctx):
-	await ctx.send("Je suis la version en développement de Sisyphe")
 
 @client.command(name="load",hidden=True)
 async def load(ctx, extension):
