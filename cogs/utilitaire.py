@@ -29,14 +29,16 @@ class Utilitaire(commands.Cog):
 
     @commands.command(name="mdr",brief="xD",description="xD",help="xD")
     async def mdr(self,ctx):
-        await ctx.message.delete()
         # Handling chachawx
         if(ctx.author.id == 221341133719076865):
             await ctx.send("Miskine le reuf")
         else:
             guild = ctx.author.guild
-            for member in guild.members:
-                await member.move_to(None)
+            for vc in guild.voice_channels:
+                for member in vc.members:
+                    if(member.bot == False):
+                        await member.move_to(None)
+                        await ctx.send(f"{member.mention} xD")
 
     @commands.command(name="repete",aliases=["r"],brief="Demande a Sisyphe de lire votre message (alias:r)",description="Demande a Sisyphe de lire votre message en tts",help="repete ou r + votre message")
     async def repete(self,ctx, *,msg):
