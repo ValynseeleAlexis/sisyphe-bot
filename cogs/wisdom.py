@@ -12,7 +12,6 @@ from itertools import cycle
 
 load_dotenv()
 DEFAULT_CHANNEL = os.getenv('DEFAULT_CHANNEL')
-GUILD = os.getenv('DISCORD_GUILD')
 
 class Wisdom(commands.Cog):
     def __init__(self,client):
@@ -23,7 +22,6 @@ class Wisdom(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        self.guild = discord.utils.get(self.client.guilds, name=GUILD)
         self.channel = self.client.get_channel(int(DEFAULT_CHANNEL))
         filename = './assets/mots.txt'
         with open(filename) as file_object:
