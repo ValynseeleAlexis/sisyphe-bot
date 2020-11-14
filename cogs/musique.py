@@ -231,12 +231,12 @@ class VoiceState:
             self.next.clear()
 
             if not self.loop:
-                # Try to get the next song within 5 minutes.
+                # Try to get the next song within 60 minutes.
                 # If no song will be added to the queue in time,
                 # the player will disconnect due to performance
                 # reasons.
                 try:
-                    async with timeout(300):  # 5 minutes
+                    async with timeout(3600):  # 60 minutes
                         self.current = await self.songs.get()
                 except asyncio.TimeoutError:
                     self.client.loop.create_task(self.stop())
@@ -374,10 +374,10 @@ class Musique(commands.Cog):
             ctx.voice_state.voice.resume()
             await ctx.message.add_reaction('⏯')
 
-    @commands.command(name='clear')
+    @commands.command(name='clear',aliases=['stop'])
     @commands.has_permissions(manage_guild=True)
     async def _clear(self, ctx: commands.Context):
-        """Vide la file."""
+        """Vide la file. (aliase:!stop)"""
         if ctx.voice_state:
             ctx.voice_state.songs.clear()
             if  ctx.voice_state.is_playing:
@@ -510,5 +510,16 @@ class Musique(commands.Cog):
             if ctx.voice_client.channel != ctx.author.voice.channel:
                 raise commands.CommandError('Sisyphe est déjà dans un salon vocal')
 
+   #Greetings user if not playing
+    @commands.Cog.listener()
+    async def on_voice_state_update(self,member,before, after):
+        if member.bot == False:
+            guildid = member.guild.id
+            voice_state = self.voice_states.get(guildid)
+            if voice_state:
+                if before.channel != voice_state.voice.channel and after.channel == voice_state.voice.channel:
+                    if voice_state.voice.is_playing() == False and voice_state.voice.is_paused() == False :
+                        voice_state.voice.play(discord.FFmpegPCMAudio('assets/chacha.mp3'))
+            
 def setup(client):
     client.add_cog(Musique(client))
