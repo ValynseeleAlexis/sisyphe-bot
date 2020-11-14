@@ -231,7 +231,7 @@ class VoiceState:
             self.next.clear()
 
             if not self.loop:
-                # Try to get the next song within 3 minutes.
+                # Try to get the next song within 5 minutes.
                 # If no song will be added to the queue in time,
                 # the player will disconnect due to performance
                 # reasons.
@@ -404,11 +404,11 @@ class Musique(commands.Cog):
             ctx.voice_state.skip_votes.add(voter.id)
             total_votes = len(ctx.voice_state.skip_votes)
 
-            if total_votes >= 3:
+            if total_votes >= 2:
                 await ctx.message.add_reaction('⏭')
                 ctx.voice_state.skip()
             else:
-                await ctx.send('Actuellement **{} votes/3** pour passer'.format(total_votes))
+                await ctx.send('Actuellement **{} votes/2** pour passer'.format(total_votes))
 
         else:
             await ctx.send('Tu as déjà voté')
