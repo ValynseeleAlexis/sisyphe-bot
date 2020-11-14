@@ -43,7 +43,7 @@ class Utilitaire(commands.Cog):
         await ctx.message.delete()
         await ctx.channel.send(f'{msg}',tts=True)
 
-    @commands.command(name="clear",aliases=['c'],brief="Purge le channel courant du nombre messages précisés (alias:c)",description="Purge le channel courant du nombre messages précisés",help="clear ou c + nombre de messages")
+    @commands.command(name="purge",aliases=['p'],brief="Purge le channel courant du nombre messages précisés (alias:p)",description="Purge le channel courant du nombre messages précisés",help="clear ou c + nombre de messages")
     async def clear(self,ctx,amount: int):
         deleted = await ctx.channel.purge(limit=amount)
         await ctx.send(f"Deleted {len(deleted)} messages")

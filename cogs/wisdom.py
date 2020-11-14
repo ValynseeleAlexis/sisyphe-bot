@@ -126,11 +126,12 @@ class Wisdom(commands.Cog):
 
         await ctx.send(f"{random.choice(pattern)}\n")
     # LOOP
-    @tasks.loop(minutes=15)
+    @tasks.loop(minutes=60)
     async def autoWisdom(self):
         await self.channel.send(next(self.cycle))
-        
-    @tasks.loop(minutes=450)
+
+    #60*30 patterns 
+    @tasks.loop(minutes=1800)
     async def regenerateCycle(self):
         self.cycle = self.patternGenerator()
         self.cycle = random.sample(self.cycle,len(self.cycle))

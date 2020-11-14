@@ -2,9 +2,6 @@
 
 """
 Copyright (c) 2019 Valentin B.
-A simple music client written in discord.py using youtube-dl.
-Though it's a simple example, music clients are complex and require much time and knowledge until they work perfectly.
-Use this as an example or a base for your own client and extend it as you want. If there are any bugs, please let me know.
 Requirements:
 Python 3.5+
 pip install -U discord.py pynacl youtube-dl
@@ -85,7 +82,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.stream_url = data.get('url')
 
     def __str__(self):
-        return '**{0.title}** by **{0.uploader}**'.format(self)
+        return '**{0.title}** de **{0.uploader}**'.format(self)
 
     @classmethod
     async def create_source(cls, ctx: commands.Context, search: str, *, loop: asyncio.BaseEventLoop = None):
@@ -155,7 +152,7 @@ class Song:
         self.requester = source.requester
 
     def create_embed(self):
-        embed = (discord.Embed(title='Joue actuellment',
+        embed = (discord.Embed(title='Joue actuellement',
                                description='```css\n{0.source.title}\n```'.format(self),
                                color=discord.Color.blurple())
                  .add_field(name='Durée', value=self.source.duration)
@@ -239,10 +236,11 @@ class VoiceState:
                 # the player will disconnect due to performance
                 # reasons.
                 try:
-                    async with timeout(180):  # 3 minutes
+                    async with timeout(300):  # 5 minutes
                         self.current = await self.songs.get()
                 except asyncio.TimeoutError:
                     self.client.loop.create_task(self.stop())
+                    await self._ctx.send("Timeout")
                     return
 
             self.current.source.volume = self._volume
@@ -271,7 +269,7 @@ class VoiceState:
             self.voice = None
 
 
-class Music(commands.Cog):
+class Musique(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.voice_states = {}
@@ -334,7 +332,7 @@ class Music(commands.Cog):
         """Renvoit Sisyphe."""
 
         if not ctx.voice_state.voice:
-            return await ctx.send("Vous devez d'abord rejoindre un salon vocal")
+            return await ctx.send("Sisyphe n'est pas dans un salon vocal")
 
         await ctx.voice_state.stop()
         del self.voice_states[ctx.guild.id]
@@ -363,7 +361,7 @@ class Music(commands.Cog):
     async def _pause(self, ctx: commands.Context):
         """Mets en pause."""
 
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
+        if ctx.voice_state.voice.is_playing():
             ctx.voice_state.voice.pause()
             await ctx.message.add_reaction('⏯')
 
@@ -372,24 +370,26 @@ class Music(commands.Cog):
     async def _resume(self, ctx: commands.Context):
         """Enlève la pause."""
 
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
+        if ctx.voice_state.voice.is_paused():
             ctx.voice_state.voice.resume()
             await ctx.message.add_reaction('⏯')
 
-    @commands.command(name='stop')
+    @commands.command(name='clear')
     @commands.has_permissions(manage_guild=True)
-    async def _stop(self, ctx: commands.Context):
-        """Eteint le lecteur."""
-
-        ctx.voice_state.songs.clear()
-
-        if not ctx.voice_state.is_playing:
-            ctx.voice_state.voice.stop()
+    async def _clear(self, ctx: commands.Context):
+        """Vide la file."""
+        if ctx.voice_state:
+            ctx.voice_state.songs.clear()
+            if  ctx.voice_state.is_playing:
+                ctx.voice_state.voice.stop()
+            await ctx.send("La file a été vidée")
             await ctx.message.add_reaction('⏹')
+        else:
+            await ctx.send("Sisyphe n'est pas connecté")
 
     @commands.command(name='skip')
     async def _skip(self, ctx: commands.Context):
-        """Vote pour skip.
+        """Vote pour passer.
         """
 
         if not ctx.voice_state.is_playing:
@@ -408,7 +408,7 @@ class Music(commands.Cog):
                 await ctx.message.add_reaction('⏭')
                 ctx.voice_state.skip()
             else:
-                await ctx.send('Actuellement **{} votes/3** pour skip'.format(total_votes))
+                await ctx.send('Actuellement **{} votes/3** pour passer'.format(total_votes))
 
         else:
             await ctx.send('Tu as déjà voté')
@@ -447,7 +447,7 @@ class Music(commands.Cog):
 
     @commands.command(name='remove')
     async def _remove(self, ctx: commands.Context, index: int):
-        """Enlève une musique à l'index donné"""
+        """Enlève une musique à l'index donné."""
 
         if len(ctx.voice_state.songs) == 0:
             return await ctx.send('Empty queue.')
@@ -457,7 +457,7 @@ class Music(commands.Cog):
 
     @commands.command(name='loop')
     async def _loop(self, ctx: commands.Context):
-        """Rejouer la musique actuelle
+        """Rejouer la musique actuelle. (NE MARCHE PAS)
         """
 
         if not ctx.voice_state.is_playing:
@@ -469,7 +469,7 @@ class Music(commands.Cog):
 
     @commands.command(name='play')
     async def _play(self, ctx: commands.Context, *, search: str):
-        """Joue une musique avec un url ou un nom
+        """Joue une musique avec un url ou un nom.
         """
 
         if not ctx.voice_state.voice:
@@ -484,7 +484,21 @@ class Music(commands.Cog):
                 song = Song(source)
 
                 await ctx.voice_state.songs.put(song)
-                await ctx.send('Mis en file de {}'.format(str(source)))
+                await ctx.send('Mise en file de {}'.format(str(source)))
+
+    @commands.command(name='chacha')
+    async def _chacha(self,ctx: commands.Context):
+        """On ne négocie pas avec les terroristes
+        """
+        if not ctx.voice_state.voice:
+            await ctx.invoke(self._join)
+        
+        ctx.voice_state.songs.clear()
+        if ctx.voice_state.voice.is_playing():
+            ctx.voice_state.voice.stop()
+        ctx.voice_state.voice.play(discord.FFmpegPCMAudio('assets/chacha.mp3'))
+        await ctx.send("On ne négocie pas avec les terroristes !")
+
 
     @_join.before_invoke
     @_play.before_invoke
@@ -497,4 +511,4 @@ class Music(commands.Cog):
                 raise commands.CommandError('Sisyphe est déjà dans un salon vocal')
 
 def setup(client):
-    client.add_cog(Music(client))
+    client.add_cog(Musique(client))
